@@ -8,64 +8,63 @@ public class Control : MonoBehaviour
 {
     public float speed;
     public float dashSpeed;
-    private float dashTime;
-    public float startDashTime;
-    private float dashCooldown;
-    private float nextDash;
-    public Rigidbody2D rb;
 
-    private Animation anim;
-    public GameObject dashEffect;
+    public float bulletSpeed;
+    public float fireRate;
+    private float nextFire = 0.0f;
 
+    public GameObject crosshair;
+    public GameObject bulletPrefab;
 
-    // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        dashTime = startDashTime;
-        dashCooldown = 2.0f;
-        nextDash = 0.0f;
-        anim = gameObject.GetComponent<Animation>();
     }
 
-    // Update is called once per frame
     void Update()
     {
-        float moveHorizontal = Input.GetAxis("Horizontal");
-        float moveVertical = Input.GetAxis("Vertical");
+        Vector3 horizontal = new Vector3(Input.GetAxis("Horizontal"), 0.0f, 0.0f);
+        transform.position = transform.position + horizontal * speed * Time.deltaTime;
 
-        Vector2 movement = new Vector2(moveHorizontal, moveVertical);
-        rb.velocity = movement * speed;
+        Vector3 vertical = new Vector3(0.0f, Input.GetAxis("Vertical"), 0.0f);
+        transform.position = transform.position + vertical * speed * Time.deltaTime;
 
-        if(CollisionDetect.Hit == true)
-        {
-            transform.Translate((CollisionDetect.Wall.x) / 1000, 0, (CollisionDetect.Wall.z) / 1000, Space.World);
-        }
+        var dir = Input.mousePosition - Camera.main.WorldToScreenPoint(transform.position);
+        var angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+
+        AimAndShoot();
 
         if (Input.GetKey(KeyCode.LeftShift))
         {
-            if(dashTime <= 0)
-            {
-                dashTime = startDashTime;
-                rb.velocity = movement * speed;
-                Instantiate(dashEffect, transform.position, Quaternion.identity);
-            }
-            else if(Time.time > nextDash)
-            {
-                Instantiate(dashEffect, transform.position, Quaternion.identity);
-                //anim.Play("Dash");
-                dashTime -= Time.deltaTime;
-                rb.velocity = movement * dashSpeed;
-                nextDash = Time.time + dashCooldown;
-            }
+            transform.position = transform.position + horizontal * dashSpeed * Time.deltaTime;
+            transform.position = transform.position + vertical * dashSpeed * Time.deltaTime;
+
         }
+
     }
 
-    private float getVelocityX()
+    private void AimAndShoot()
     {
-        return rb.velocity.x;
-    }
-    private float getVelocityY()
-    {
-        return rb.velocity.y;
+        Vector3 aim = Input.mousePosition;
+        aim = Camera.main.ScreenToWorldPoint(aim);
+        crosshair.transform.position = Vector2.Lerp(crosshair.transform.position, aim, 0.5f);
+
+        Vector2 aim2D = Input.mousePosition;
+        aim2D = Camera.main.ScreenToWorldPoint(aim2D);
+        Vector2 currentPostion = new Vector2(transform.position.x, transform.position.y);
+        Vector2 direction = aim2D - currentPostion;
+        direction.Normalize();
+
+        if (Input.GetMouseButton(0) && Time.time > nextFire)
+        {
+            nextFire = Time.time + fireRate;
+            GameObject bullet = Instantiate(bulletPrefab, transform.position, Quaternion.identity);
+            bullet.GetComponent<Rigidbody2D>().velocity = direction * bulletSpeed;
+            //bullet.transform.position = transform.position + transform.up * 1f;
+            bullet.transform.rotation = transform.rotation;
+            bullet.SetActive(true);
+            bullet.GetComponent<Rigidbody2D>().AddForce(transform.up * bulletSpeed);
+            Destroy(bullet, 2.0f);
+        }
     }
 }
