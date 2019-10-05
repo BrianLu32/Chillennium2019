@@ -2,70 +2,71 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable]
+public class Control : MonoBehaviour {
 
-public class Control : MonoBehaviour
-{
-    public float speed;
-    public float dashSpeed;
-    private float dashTime;
-    public float startDashTime;
-    private float dashCooldown;
-    private float nextDash;
     public Rigidbody2D rb;
+    public float speed = 5.0f;
+    public float jumpForce = 700f;
 
-    private Animation anim;
-    public GameObject dashEffect;
+    public Animator anim;
 
+    private bool IsGrounded;
+    public Transform GroundCheck;
+    private float groundRadius = 0.2f;
+    public LayerMask groundLayers;
 
-    // Start is called before the first frame update
-    void Start()
+    // Use this for initialization
+    void Start () {
+        rb = GetComponent<Rigidbody2D>();
+        anim = GetComponent<Animator>();
+	}
+
+    void Update()
     {
-        dashTime = startDashTime;
-        dashCooldown = 2.0f;
-        nextDash = 0.0f;
-        anim = gameObject.GetComponent<Animation>();
+        if(IsGrounded && Input.GetKeyDown(KeyCode.Space))
+        {
+            anim.SetBool("Ground", false);
+            rb.AddForce(new Vector2(0, jumpForce));
+        }
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        float moveHorizontal = Input.GetAxis("Horizontal");
-        float moveVertical = Input.GetAxis("Vertical");
+    void FixedUpdate () {
 
-        Vector2 movement = new Vector2(moveHorizontal, moveVertical);
+        IsGrounded = Physics2D.OverlapCircle(GroundCheck.position, groundRadius, groundLayers);
+        anim.SetBool("Ground", IsGrounded);
+        anim.SetFloat("VerticalSpeed", rb.velocity.y);
+
+        float moveHorizontal = Input.GetAxis("Horizontal");
+
+        Vector2 movement = new Vector2(moveHorizontal, rb.velocity.y);
         rb.velocity = movement * speed;
 
-        if(CollisionDetect.Hit == true)
+        if(getVelocity() > 0.5)
         {
-            transform.Translate((CollisionDetect.Wall.x) / 1000, 0, (CollisionDetect.Wall.z) / 1000, Space.World);
-        }
-
-        if (Input.GetKey(KeyCode.LeftShift))
-        {
-            if(dashTime <= 0)
+            if(transform.localScale.x > 0)
             {
-                dashTime = startDashTime;
-                rb.velocity = movement * speed;
-                Instantiate(dashEffect, transform.position, Quaternion.identity);
+                Flip();
             }
-            else if(Time.time > nextDash)
+        }
+        else if(getVelocity() < -0.5)
+        {
+            if(transform.localScale.x < 0)
             {
-                Instantiate(dashEffect, transform.position, Quaternion.identity);
-                //anim.Play("Dash");
-                dashTime -= Time.deltaTime;
-                rb.velocity = movement * dashSpeed;
-                nextDash = Time.time + dashCooldown;
+                Flip();
             }
         }
     }
 
-    private float getVelocityX()
+    void Flip()
+    {
+        Vector3 theScale = transform.localScale;
+        theScale.x *= -1;
+        transform.localScale = theScale;
+    }
+
+    public float getVelocity()
     {
         return rb.velocity.x;
-    }
-    private float getVelocityY()
-    {
-        return rb.velocity.y;
     }
 }
