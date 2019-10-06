@@ -8,6 +8,7 @@ public class boss1AI : MonoBehaviour
     public GameObject grunt;
     float time = 2;
     public float hp = 10;
+    public GameObject stunP;
     Vector3 spawn1;
     Vector3 spawn2;
 
@@ -31,11 +32,13 @@ public class boss1AI : MonoBehaviour
         time -= Time.deltaTime;
         if (time <= 0)
         {
-            Instantiate(stuns,transform.position, Quaternion.identity);
+            Instantiate(stuns,stunP.transform.position, Quaternion.identity);
             //stuns.transform = this.transform;
             time = 2;
 
            Instantiate(grunt, spawn1 , Quaternion.identity);
+           Instantiate(grunt, spawn2, Quaternion.identity);
+
         }
     }
 }

@@ -7,12 +7,12 @@ public class barrelAI : MonoBehaviour
     //double time = 10;
     Vector3 direction;
    
-    double speed = .75;
+    double speed = .6;
     
     // Update is called once per fram
     void Awake()
     {
-        direction = new Vector3(transform.position.x - 5, transform.position.y, 0);
+        direction = new Vector3(transform.position.x - 15, transform.position.y, 0);
 
     }
     void Update()

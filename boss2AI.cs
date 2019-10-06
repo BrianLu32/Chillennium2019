@@ -8,6 +8,7 @@ public class boss2AI : MonoBehaviour
     public GameObject barrel;
     public GameObject barre2;
     public GameObject grunt;
+  
     bool buffer = true;
     Vector3 b1;
     public Vector3 b2;
@@ -23,11 +24,11 @@ public class boss2AI : MonoBehaviour
     void Awake()
     {
         b1 = new Vector3(transform.position.x, transform.position.y, 0);
-        b2 = new Vector3(transform.position.x, transform.position.y + (float)1.65, 0);
-        b3 = new Vector3(transform.position.x, transform.position.y - (float)1.65, 0);
+        b2 = new Vector3(transform.position.x, transform.position.y + (float)3, 0);
+        b3 = new Vector3(transform.position.x, transform.position.y - (float)3, 0);
         bs1 = new Vector3(transform.position.x - 1, transform.position.y, 0);
-        bs2 = new Vector3(transform.position.x - 1, transform.position.y + 2, 0);
-        bs3 = new Vector3(transform.position.x - 1, transform.position.y - 2, 0);
+        bs2 = new Vector3(transform.position.x - 1, transform.position.y + 3, 0);
+        bs3 = new Vector3(transform.position.x - 1, transform.position.y - 3, 0);
         g1 = new Vector3(transform.position.x - 3, transform.position.y + 3, 0);
         g2 = new Vector3(transform.position.x - 3, transform.position.y - 3, 0);
 
