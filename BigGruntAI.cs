@@ -2,39 +2,39 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Chase : MonoBehaviour
+public class BigGruntAI : MonoBehaviour
 {
     // Start is called before the first frame update
     public GameObject target;
     public float speed;
+    public int hp;
     void OnCollisionEnter2D(Collision2D touched)
     {
         if (touched.gameObject.name == "bullet")
         {
-            Destroy(this.gameObject);
+            hp -= 1;
         }
         if (touched.gameObject.name == "Main")
         {
             Vector3 pos = transform.position;
             var MainPos = new Vector3(target.transform.position.x, target.transform.position.y, 0);
             var moveEnemy = MainPos - pos;
-            transform.position += moveEnemy * speed * -Time.deltaTime*30;
+            transform.position += moveEnemy * speed * -Time.deltaTime * 10;
         }
-       
+
 
     }
     // Update is called once per frame
 
     void Update()
     {
-       if(this.gameObject.name == "grunt(Clone)")
-        {
-            Vector3 pos = transform.position;
-            var MainPos = new Vector3(target.transform.position.x, target.transform.position.y, 0);
-            var moveEnemy = MainPos - pos;
-            transform.position += moveEnemy * speed * Time.deltaTime;
-        }
-        
+
+        Vector3 pos = transform.position;
+        var MainPos = new Vector3(target.transform.position.x, target.transform.position.y, 0);
+        var moveEnemy = MainPos - pos;
+        transform.position += moveEnemy * speed * Time.deltaTime;
+
+
     }
-   
+
 }

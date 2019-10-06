@@ -12,14 +12,37 @@ public class BasicMove : MonoBehaviour
  
     void OnCollisionEnter2D(Collision2D touched)
     {
-        if (touched.gameObject.name == "Enemy")
+        if (touched.gameObject.name == "villager" || touched.gameObject.name == "grunt(Clone)")
         {
-            speed -= 1;
+            if(speed > 2)
+            {
+                speed -= 1;
+            }
             hit = true;
             time = 2;
             hp -= 1;
         }
-
+        if(touched.gameObject.name == "BigGrunt")
+        {
+            if (speed > 2)
+            {
+                speed -= 2;
+            }
+            hit = true;
+            time = 2;
+            hp -= 2;
+        }
+        if (touched.gameObject.name == "barrel1(Clone)")
+        {
+            hp -= 3;
+        }
+        if (touched.gameObject.name == "Bomb(Clone)")
+        {
+            speed = 0;
+            hit = true;
+            time = 1;
+            hp -= 1;
+        }
     }
 
     void Update()
